@@ -3,11 +3,12 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const authRoutes = require("./routes/auth");
 const messageRoutes = require("./routes/messages");
+const path = require("path");
 const app = express();
 const socket = require("socket.io");
 require("dotenv").config();
 
-app.use(cors());
+// app.use(cors());
 app.use(express.json());
 
 mongoose
@@ -24,6 +25,14 @@ mongoose
 
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+app.use(express.static(path.join(__dirname, "../public/build")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "../public/build/index.html"));
+});
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 const server = app.listen(process.env.PORT, () =>
   console.log(`Server started on ${process.env.PORT}`)
